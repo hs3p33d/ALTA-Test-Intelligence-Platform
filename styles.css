@@ -379,3 +379,50 @@ h3 {
     border: 1px solid #00D4FF;
     background: #16304D;
 }
+
+/* =====================================
+SCENARIO GENERATOR
+===================================== */
+
+.answer-box {
+
+    background: #101A2E;
+
+    padding: 25px;
+
+    border-radius: 14px;
+
+    border: 1px solid rgba(0,212,255,.15);
+
+    margin-top: 20px;
+
+    overflow-x: auto;
+}
+
+.answer-box h1,
+.answer-box h2,
+.answer-box h3 {
+
+    color: #00D4FF;
+}
+
+.answer-box strong {
+
+    color: #FFFFFF;
+}
+.premium-section {
+    padding: 15px 20px;
+    border-radius: 12px;
+    background: linear-gradient(
+        135deg,
+        rgba(0,212,255,.12),
+        rgba(16,32,58,.4)
+    );
+    border: 1px solid rgba(0,212,255,.15);
+    margin-bottom: 15px;
+}
+
+.premium-section h3 {
+    margin: 0;
+    color: #00D4FF;
+}

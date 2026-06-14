@@ -6,6 +6,10 @@ import sqlite3
 import streamlit as st
 
 from services.rag_service import ask_alta
+from services.scenario_service import generate_scenarios
+from services.protocol_service import generate_protocol
+from services.protocol_excel_builder import protocol_to_excel
+from services.impact_analysis_service import generate_impact_analysis
 
 DB_NAME = "alta_poc.db"
 BASE_DIR = Path(__file__).resolve().parent
@@ -120,6 +124,23 @@ if "qa_result" not in st.session_state:
 if "qa_last_submitted" not in st.session_state:
     st.session_state.qa_last_submitted = ""
 
+if "scenario_input" not in st.session_state:
+    st.session_state.scenario_input = ""
+
+if "scenario_result" not in st.session_state:
+    st.session_state.scenario_result = ""
+
+if "protocol_input" not in st.session_state:
+    st.session_state.protocol_input = ""
+
+if "protocol_result" not in st.session_state:
+    st.session_state.protocol_result = ""
+
+if "impact_input" not in st.session_state:
+    st.session_state.impact_input = ""
+
+if "impact_result" not in st.session_state:
+    st.session_state.impact_result = ""
 
 # ==========================================
 # SIDEBAR
@@ -273,8 +294,8 @@ if page == "🏠 Dashboard":
     <div class="metric-title" style="margin-bottom: 8px;">AI</div>
     <div style="color: #ffffff; line-height: 1.8;">
         ✅ ALTA Knowledge Search<br>
-        ✅ Intent Detection<br>
-        ✅ Contextual Answers
+        ✅ Test Scenario Generator<br>
+        ✅ Protocol Generator
     </div>
 </div>
 """,
@@ -312,7 +333,9 @@ if page == "🏠 Dashboard":
             """
 <div class="metric-card">
     <div class="metric-value" style="font-size: 20px;">Next</div>
-    <div class="metric-title">Scenario / Protocol / Impact</div>
+    <div class="metric-title">Scenario Generator ✅
+Protocol Generator ✅
+Impact Analysis 🔜</div>
 </div>
 """,
             unsafe_allow_html=True
@@ -325,90 +348,160 @@ if page == "🏠 Dashboard":
 
 elif page == "🔎 AI Q&A":
 
-    st.title("🔍 ALTA Knowledge Search")
-    st.caption("Search across Requirements, Risks, Screens, Parameters and Traceability relationships.")
+    st.title("🔎 ALTA Knowledge Search")
 
-    st.subheader("Suggested Searches")
+    st.caption(
+        "Search across Requirements, Risks, Screens, Parameters and Traceability relationships."
+    )
 
-    q1, q2, q3 = st.columns(3)
-
-    with q1:
-        if st.button("What is HPI?", use_container_width=True):
-            st.session_state.qa_query = "What is HPI?"
-            st.rerun()
-
-        if st.button("Tell me about CAI", use_container_width=True):
-            st.session_state.qa_query = "Tell me about CAI"
-            st.rerun()
-
-    with q2:
-        if st.button("What is RSK-015?", use_container_width=True):
-            st.session_state.qa_query = "What is RSK-015?"
-            st.rerun()
-
-        if st.button("What risks are associated with HPI?", use_container_width=True):
-            st.session_state.qa_query = "What risks are associated with HPI?"
-            st.rerun()
-
-    with q3:
-        if st.button("Which screens use Smart Wedge?", use_container_width=True):
-            st.session_state.qa_query = "Which screens use Smart Wedge?"
-            st.rerun()
-
-        if st.button("What parameters are related to CAI?", use_container_width=True):
-            st.session_state.qa_query = "What parameters are related to CAI?"
-            st.rerun()
-
-    st.divider()
-
-    st.markdown("### Search ALTA Knowledge Base")
+    st.caption(
+        "Supports: Requirements • Risks • Screens • Parameters • Traceability"
+    )
 
     question = st.text_input(
         "Ask ALTA AI",
         value=st.session_state.qa_query,
-        placeholder="Type a question like: What is HPI?"
+        placeholder="Example: What is HPI?"
     )
 
-    b1, b2, b3 = st.columns([2, 1, 1])
+    st.caption("Quick Searches")
 
-    with b1:
-        search_clicked = st.button("🔍 Search", use_container_width=True)
+    q1, q2, q3, q4, q5, q6 = st.columns(6)
 
-    with b2:
-        clear_clicked = st.button("Clear", use_container_width=True)
+    with q1:
+        if st.button(
+            "HPI",
+            use_container_width=True
+        ):
+            st.session_state.qa_query = "What is HPI?"
+            st.rerun()
 
-    with b3:
-        st.caption("Use the buttons above for quick queries.")
+    with q2:
+        if st.button(
+            "CAI",
+            use_container_width=True
+        ):
+            st.session_state.qa_query = "Tell me about CAI"
+            st.rerun()
+
+    with q3:
+        if st.button(
+            "RSK-015",
+            use_container_width=True
+        ):
+            st.session_state.qa_query = "What is RSK-015?"
+            st.rerun()
+
+    with q4:
+        if st.button(
+            "HPI Risks",
+            use_container_width=True
+        ):
+            st.session_state.qa_query = (
+                "What risks are associated with HPI?"
+            )
+            st.rerun()
+
+    with q5:
+        if st.button(
+            "Smart Wedge",
+            use_container_width=True
+        ):
+            st.session_state.qa_query = (
+                "Which screens use Smart Wedge?"
+            )
+            st.rerun()
+
+    with q6:
+        if st.button(
+            "CAI Params",
+            use_container_width=True
+        ):
+            st.session_state.qa_query = (
+                "What parameters are related to CAI?"
+            )
+            st.rerun()
+
+    st.divider()
+
+    col1, col2 = st.columns([3, 1])
+
+    with col1:
+
+        search_clicked = st.button(
+            "🔍 Search",
+            use_container_width=True
+        )
+
+    with col2:
+
+        clear_clicked = st.button(
+            "Clear",
+            use_container_width=True
+        )
 
     if clear_clicked:
+
         st.session_state.qa_query = ""
+
         st.session_state.qa_result = ""
+
         st.session_state.qa_last_submitted = ""
+
         st.rerun()
 
     if search_clicked:
+
         if not normalize_text(question):
-            st.warning("Please enter a question.")
+
+            st.warning(
+                "Please enter a question."
+            )
+
         else:
+
             st.session_state.qa_query = question
-            st.session_state.qa_last_submitted = question
-            with st.spinner("Analyzing ALTA Knowledge..."):
-                st.session_state.qa_result = ask_alta(question)
+
+            st.session_state.qa_last_submitted = (
+                question
+            )
+
+            with st.spinner(
+                "Analyzing ALTA Knowledge..."
+            ):
+
+                st.session_state.qa_result = (
+                    ask_alta(
+                        question
+                    )
+                )
 
     if st.session_state.qa_result:
-        st.markdown("### Search Result")
+
+        st.success(
+            "Knowledge Search Completed"
+        )
+
         st.markdown(
-            f"""
-<div class="answer-box">
-{st.session_state.qa_result}
+            """
+<div class="premium-section">
+<h3>Knowledge Search Result</h3>
 </div>
 """,
             unsafe_allow_html=True
         )
+
+        st.markdown(
+            st.session_state.qa_result
+        )
+
     else:
-        st.info("Search ALTA knowledge to see requirements, risks, screens and parameters.")
 
-
+        st.info(
+            "Ask ALTA anything about Requirements, Risks, Screens, Parameters or Traceability."
+        )
+        
+        
 # ==========================================
 # REQUIREMENT REPOSITORY
 # ==========================================
@@ -533,37 +626,152 @@ elif page == "📋 Requirement Repository":
 
 elif page == "🧪 Test Scenario Generator":
 
-    st.title("Test Scenario Generator")
-    st.caption("Generate structured test scenarios from ALTA requirements.")
+    st.title("🧪 Test Scenario Generator")
 
-    c1, c2 = st.columns([2, 1])
-
-    with c1:
-        feature = st.text_input(
-            "Feature / Requirement",
-            placeholder="Example: HPI, Smart Wedge, CAI, ANA-001"
-        )
-
-    with c2:
-        priority = st.selectbox(
-            "Scenario Depth",
-            ["Standard", "Detailed", "Regression Focus"]
-        )
-
-    st.markdown(
-        """
-<div class="metric-card">
-    <div class="metric-title">Expected Output</div>
-    <div style="margin-top: 10px; color: #ffffff; line-height: 1.8;">
-        Positive scenarios • Negative scenarios • Boundary scenarios • Error scenarios • Regression scenarios
-    </div>
-</div>
-""",
-        unsafe_allow_html=True
+    st.caption(
+        "Generate AI-powered test scenarios from Requirements, Features, Screens or Change Requests."
     )
 
-    if st.button("Generate Scenarios", use_container_width=True):
-        st.info("Scenario generation will be connected in the next phase.")
+    st.caption(
+        "Supports: Requirement IDs • Features • Screens • Change Requests"
+    )
+
+    user_input = st.text_input(
+        "Feature / Requirement / Screen / Change Description",
+        value=st.session_state.scenario_input,
+        placeholder="Example: HPI, ANA-001, SCR-023 or Add configurable HPI threshold settings"
+    )
+
+    st.caption("Quick Templates")
+
+    t1, t2, t3, t4, t5, t6 = st.columns(6)
+
+    with t1:
+        if st.button(
+            "HPI",
+            use_container_width=True
+        ):
+            st.session_state.scenario_input = "HPI"
+            st.rerun()
+
+    with t2:
+        if st.button(
+            "CAI",
+            use_container_width=True
+        ):
+            st.session_state.scenario_input = "CAI"
+            st.rerun()
+
+    with t3:
+        if st.button(
+            "Smart Wedge",
+            use_container_width=True
+        ):
+            st.session_state.scenario_input = "Smart Wedge"
+            st.rerun()
+
+    with t4:
+        if st.button(
+            "ANA-001",
+            use_container_width=True
+        ):
+            st.session_state.scenario_input = "ANA-001"
+            st.rerun()
+
+    with t5:
+        if st.button(
+            "SCR-023",
+            use_container_width=True
+        ):
+            st.session_state.scenario_input = "SCR-023"
+            st.rerun()
+
+    with t6:
+        if st.button(
+            "New Feature",
+            use_container_width=True
+        ):
+            st.session_state.scenario_input = (
+                "Add configurable HPI threshold settings"
+            )
+            st.rerun()
+
+    st.divider()
+
+    col1, col2 = st.columns([3, 1])
+
+    with col1:
+
+        generate_clicked = st.button(
+            "🧪 Generate Scenarios",
+            use_container_width=True
+        )
+
+    with col2:
+
+        clear_clicked = st.button(
+            "Clear",
+            use_container_width=True
+        )
+
+    if clear_clicked:
+
+        st.session_state.scenario_input = ""
+
+        st.session_state.scenario_result = ""
+
+        st.rerun()
+
+    if generate_clicked:
+
+        if not user_input.strip():
+
+            st.warning(
+                "Please enter a Feature, Requirement ID, Screen ID or Change Description."
+            )
+
+        else:
+
+            with st.spinner(
+                "Generating ALTA Test Scenarios..."
+            ):
+
+                st.session_state.scenario_result = (
+                    generate_scenarios(
+                        user_input
+                    )
+                )
+
+                st.session_state.scenario_input = (
+                    user_input
+                )
+
+    if st.session_state.scenario_result:
+
+        st.success(
+            "Scenarios Generated Successfully"
+        )
+
+        st.markdown(
+            """
+<div class="premium-section">
+<h3>Generated Test Scenarios</h3>
+</div>
+""",
+            unsafe_allow_html=True
+        )
+
+        st.download_button(
+            label="📥 Download Scenarios",
+            data=st.session_state.scenario_result,
+            file_name=f"{st.session_state.scenario_input}_scenarios.md",
+            mime="text/markdown",
+            use_container_width=True
+        )
+
+        st.markdown(
+            st.session_state.scenario_result
+        )      
 
 
 # ==========================================
@@ -572,41 +780,129 @@ elif page == "🧪 Test Scenario Generator":
 
 elif page == "📝 Protocol Generator":
 
-    st.title("Protocol Generator")
-    st.caption("Draft protocol steps in a structured format from an ALTA requirement or feature.")
+    st.title("📝 Protocol Generator")
 
-    c1, c2 = st.columns([2, 2])
-
-    with c1:
-        feature = st.text_input(
-            "Feature / Requirement",
-            placeholder="Example: HPI Alarm Threshold Validation"
-        )
-
-    with c2:
-        scenario = st.text_input(
-            "Scenario",
-            placeholder="Example: Trigger alarm above threshold"
-        )
-
-    if st.button("Generate Protocol", use_container_width=True):
-        st.info("Protocol generation will be connected in the next phase.")
-
-    st.markdown(
-        """
-<div class="answer-box">
-    <div style="font-weight: 800; margin-bottom: 10px;">Protocol Output Preview</div>
-    <div style="line-height: 1.8;">
-        Step 1 • Preconditions<br>
-        Step 2 • Test Actions<br>
-        Step 3 • Expected Result<br>
-        Step 4 • Pass / Fail Criteria
-    </div>
-</div>
-""",
-        unsafe_allow_html=True
+    st.caption(
+        "Generate detailed ALTA validation protocols from Requirements, Features, Screens or Change Requests."
     )
 
+    st.caption(
+        "Supports: Requirement IDs • Features • Screens • Change Requests"
+    )
+
+    protocol_input = st.text_input(
+        "Feature / Requirement / Screen / Change Description",
+        value=st.session_state.protocol_input,
+        placeholder="Example: HPI"
+    )
+
+    st.caption("Quick Templates")
+
+    p1, p2, p3, p4, p5, p6 = st.columns(6)
+
+    with p1:
+        if st.button("HPI", key="proto_hpi", use_container_width=True):
+            st.session_state.protocol_input = "HPI"
+            st.rerun()
+
+    with p2:
+        if st.button("CAI", key="proto_cai", use_container_width=True):
+            st.session_state.protocol_input = "CAI"
+            st.rerun()
+
+    with p3:
+        if st.button("Smart Wedge", key="proto_sw", use_container_width=True):
+            st.session_state.protocol_input = "Smart Wedge"
+            st.rerun()
+
+    with p4:
+        if st.button("ANA-001", key="proto_ana", use_container_width=True):
+            st.session_state.protocol_input = "ANA-001"
+            st.rerun()
+
+    with p5:
+        if st.button("SCR-023", key="proto_scr", use_container_width=True):
+            st.session_state.protocol_input = "SCR-023"
+            st.rerun()
+
+    with p6:
+        if st.button("New Feature", key="proto_nf", use_container_width=True):
+            st.session_state.protocol_input = (
+                "Add configurable HPI threshold settings"
+            )
+            st.rerun()
+
+    st.divider()
+
+    col1, col2 = st.columns([3, 1])
+
+    with col1:
+
+        generate_clicked = st.button(
+            "📝 Generate Protocol",
+            use_container_width=True
+        )
+
+    with col2:
+
+        clear_clicked = st.button(
+            "Clear",
+            use_container_width=True
+        )
+
+    if clear_clicked:
+
+        st.session_state.protocol_input = ""
+
+        st.session_state.protocol_result = ""
+
+        st.rerun()
+
+    if generate_clicked:
+
+        if not protocol_input.strip():
+
+            st.warning(
+                "Please enter a Feature, Requirement ID, Screen ID or Change Description."
+            )
+
+        else:
+
+            with st.spinner(
+                "Generating ALTA Validation Protocol..."
+            ):
+
+                st.session_state.protocol_result = (
+                    generate_protocol(
+                        protocol_input
+                    )
+                )
+
+                st.session_state.protocol_input = (
+                    protocol_input
+                )
+
+    if st.session_state.protocol_result:
+
+        st.success(
+            "Protocol Generated Successfully"
+        )
+
+        excel_file = protocol_to_excel(
+    st.session_state.protocol_result
+)
+
+        st.download_button(
+            label="📥 Download Excel Protocol",
+            data=excel_file,
+            file_name=f"{st.session_state.protocol_input}_protocol.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            use_container_width=True
+        )
+
+        st.markdown(
+            st.session_state.protocol_result
+        )
 
 # ==========================================
 # IMPACT ANALYSIS
@@ -614,29 +910,113 @@ elif page == "📝 Protocol Generator":
 
 elif page == "📊 Impact Analysis":
 
-    st.title("Impact Analysis")
-    st.caption("Identify what should be retested when a feature, parameter or screen changes.")
+    st.title("📊 Impact Analysis")
 
-    changed_feature = st.text_input(
-        "Changed Feature / Parameter / Screen",
-        placeholder="Example: CAI, HPI, Smart Wedge, SCR-013"
+    st.caption(
+        "Analyze the impact of feature changes, requirements or enhancements."
     )
 
-    if st.button("Analyze Impact", use_container_width=True):
-        st.info("Impact analysis will be connected in the next phase.")
-
-    st.markdown(
-        """
-<div class="answer-box">
-    <div style="font-weight: 800; margin-bottom: 10px;">Expected Impact Output</div>
-    <div style="line-height: 1.8;">
-        Affected Requirements<br>
-        Affected Screens<br>
-        Affected Risks<br>
-        Affected Parameters<br>
-        Recommended Retest Areas
-    </div>
-</div>
-""",
-        unsafe_allow_html=True
+    impact_input = st.text_input(
+        "Feature / Requirement / Change Description",
+        value=st.session_state.impact_input,
+        placeholder="Example: HPI threshold changed from 85 to 90"
     )
+
+    st.caption("Quick Templates")
+
+    c1, c2, c3, c4 = st.columns(4)
+
+    with c1:
+        if st.button(
+            "HPI",
+            key="impact_hpi",
+            use_container_width=True
+        ):
+            st.session_state.impact_input = "HPI"
+            st.rerun()
+
+    with c2:
+        if st.button(
+            "CAI",
+            key="impact_cai",
+            use_container_width=True
+        ):
+            st.session_state.impact_input = "CAI"
+            st.rerun()
+
+    with c3:
+        if st.button(
+            "Smart Wedge",
+            key="impact_sw",
+            use_container_width=True
+        ):
+            st.session_state.impact_input = "Smart Wedge"
+            st.rerun()
+
+    with c4:
+        if st.button(
+            "ANA-001",
+            key="impact_req",
+            use_container_width=True
+        ):
+            st.session_state.impact_input = "ANA-001"
+            st.rerun()
+
+    st.divider()
+
+    b1, b2 = st.columns([3, 1])
+
+    with b1:
+
+        generate_clicked = st.button(
+            "📊 Analyze Impact",
+            use_container_width=True
+        )
+
+    with b2:
+
+        clear_clicked = st.button(
+            "Clear",
+            use_container_width=True
+        )
+
+    if clear_clicked:
+
+        st.session_state.impact_input = ""
+        st.session_state.impact_result = ""
+
+        st.rerun()
+
+    if generate_clicked:
+
+        if not impact_input.strip():
+
+            st.warning(
+                "Please enter a Feature, Requirement or Change Description."
+            )
+
+        else:
+
+            with st.spinner(
+                "Analyzing Impact..."
+            ):
+
+                st.session_state.impact_result = (
+                    generate_impact_analysis(
+                        impact_input
+                    )
+                )
+
+                st.session_state.impact_input = (
+                    impact_input
+                )
+
+    if st.session_state.impact_result:
+
+        st.success(
+            "Impact Analysis Complete"
+        )
+
+        st.markdown(
+            st.session_state.impact_result
+        )
