@@ -1,428 +1,791 @@
-/* =======================================================
-   ALTA TEST INTELLIGENCE PLATFORM
-   Premium Clinical Engineering Theme
-======================================================= */
+/* ============================================================
+   ALTA AI — styles.css (v3 — all reported issues fixed)
+   - Suggestion pills: small, single row, clearly clickable
+   - Page art: fixed 220×90 box on every inner page
+   - Dashboard: single animated ECG strip, no duplicate art
+   - Primary buttons: solid, unmistakable
+   ============================================================ */
 
-:root {
-    --bg-main: #06111f;
-    --bg-card: #0f1d35;
-    --bg-card-hover: #16294a;
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
-    --accent: #22d3ee;
-    --accent-soft: rgba(34, 211, 238, 0.15);
+*, *::before, *::after { box-sizing: border-box; }
 
-    --text-main: #f8fafc;
-    --text-secondary: #9fb3c8;
-
-    --success: #22c55e;
-    --warning: #f59e0b;
-    --danger: #ef4444;
-
-    --border: rgba(255,255,255,0.08);
+html, body, [class*="css"] {
+    font-family: 'IBM Plex Sans', system-ui, sans-serif !important;
+    font-size: 16px;
 }
 
+.stApp { background: #07090f; color: #d4dbe8; }
 
-/* =======================================================
-   APP BACKGROUND
-======================================================= */
+#MainMenu, footer, header,
+[data-testid="collapsedControl"],
+section[data-testid="stSidebar"] { display: none !important; }
 
-.stApp {
-    background:
-        radial-gradient(
-            circle at top right,
-            rgba(34,211,238,0.08),
-            transparent 35%
-        ),
-        linear-gradient(
-            180deg,
-            #071224,
-            #04101d
-        );
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: #07090f; }
+::-webkit-scrollbar-thumb { background: #1a2535; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #00b4d8; }
 
-    color: var(--text-main);
+.main .block-container {
+    padding: 0 3rem 4rem 3rem !important;
+    max-width: 100% !important;
 }
 
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
 
-/* =======================================================
-   SIDEBAR
-======================================================= */
+.logo {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #e8f0ff;
+    letter-spacing: 0.06em;
+    padding: 20px 0 16px 0;
+    white-space: nowrap;
+}
+.logo-ai { color: #00b4d8; }
 
-section[data-testid="stSidebar"] {
-
-    background:
-        linear-gradient(
-            180deg,
-            #0c1729,
-            #07101f
-        );
-
-    border-right: 1px solid var(--border);
+.nav-pip {
+    height: 3px;
+    background: #00b4d8;
+    border-radius: 0 0 3px 3px;
+    margin-bottom: -3px;
+    box-shadow: 0 0 8px #00b4d855;
 }
 
-section[data-testid="stSidebar"] * {
-    color: white;
+.nav-line { height: 1px; background: #10182a; margin: 0 0 32px 0; }
+
+/* FIX: target the navbar via its stable st.container(key="navbar")
+   class instead of :first-of-type, which could accidentally match
+   a suggestion-pill row on inner pages and strip those buttons of
+   their visible background/border.
+   Selectors are doubled up with [data-testid^="stBaseButton"] because
+   newer Streamlit releases (1.40+) render the actual <button> element
+   with that attribute instead of relying purely on the .stButton
+   wrapper class — without this, buttons fall back to unstyled
+   browser-default white buttons exactly like the bug reported. */
+.st-key-navbar .stButton > button,
+.st-key-navbar button[data-testid^="stBaseButton"] {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    color: #3d526e !important;
+    font-size: 0.88rem !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.02em !important;
+    padding: 16px 6px 14px 6px !important;
+    min-height: auto !important;
+    transition: color 0.15s !important;
+    box-shadow: none !important;
+    transform: none !important;
 }
 
+.st-key-navbar .stButton > button:hover,
+.st-key-navbar button[data-testid^="stBaseButton"]:hover {
+    color: #c8d8f0 !important;
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+}
 
-/* =======================================================
-   HEADINGS
-======================================================= */
+/* ============================================================
+   BUTTONS — three distinct tiers
+   Every rule below is duplicated against button[data-testid^="stBaseButton"]
+   to guarantee styling regardless of Streamlit version.
+   ============================================================ */
 
-h1 {
+/* Tier 1: Primary action (Generate / Search / Analyse) — solid teal.
+   This is the catch-all base style every button gets unless a more
+   specific tier-2/tier-3 rule below overrides it. */
+.main .stButton > button,
+.main button[data-testid^="stBaseButton"] {
+    background: #00b4d8 !important;
+    color: #07090f !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.02em !important;
+    padding: 12px 22px !important;
+    transition: background 0.15s, box-shadow 0.15s !important;
+    box-shadow: none !important;
+    cursor: pointer !important;
+    width: 100% !important;
+}
 
-    color: white !important;
+.main .stButton > button:hover,
+.main button[data-testid^="stBaseButton"]:hover {
+    background: #02caf5 !important;
+    box-shadow: 0 4px 20px rgba(0, 180, 216, 0.3) !important;
+    color: #07090f !important;
+}
 
-    font-weight: 800 !important;
+.main .stButton > button:active,
+.main button[data-testid^="stBaseButton"]:active {
+    background: #0095b8 !important;
+}
 
-    letter-spacing: -1px;
+/* Tier 2: All buttons nested inside columns (suggestion pills,
+   dashboard "Open X" links, nav quick-select). Pill-shaped, compact,
+   teal accent on hover. Higher specificity than Tier 1 so it wins
+   for every column-nested button. */
+.main [data-testid="column"] .stButton > button,
+.main [data-testid="column"] button[data-testid^="stBaseButton"] {
+    background: #0d1626 !important;
+    color: #6a8cb0 !important;
+    border: 1px solid #16253a !important;
+    border-radius: 16px !important;
+    font-size: 0.8rem !important;
+    font-weight: 500 !important;
+    padding: 8px 14px !important;
+    min-height: 36px !important;
+    box-shadow: none !important;
+    transition: all 0.15s ease !important;
+    width: 100% !important;
+}
 
+.main [data-testid="column"] .stButton > button:hover,
+.main [data-testid="column"] button[data-testid^="stBaseButton"]:hover {
+    background: #112236 !important;
+    color: #00b4d8 !important;
+    border-color: #00b4d855 !important;
+    box-shadow: 0 2px 10px rgba(0,180,216,0.15) !important;
+    transform: none !important;
+}
+
+/* Download button */
+.stDownloadButton > button,
+button[data-testid^="stBaseButton"][data-testid*="download"],
+.stDownloadButton button[data-testid^="stBaseButton"] {
+    background: #0a1e18 !important;
+    color: #00b4d8 !important;
+    border: 1px solid #00b4d833 !important;
+    border-radius: 8px !important;
+    font-size: 0.92rem !important;
+    font-weight: 600 !important;
+    padding: 11px 18px !important;
+    transition: all 0.15s !important;
+}
+
+.stDownloadButton > button:hover,
+.stDownloadButton button[data-testid^="stBaseButton"]:hover {
+    background: #00b4d8 !important;
+    color: #07090f !important;
+    border-color: #00b4d8 !important;
+    box-shadow: 0 4px 16px rgba(0,180,216,0.25) !important;
+}
+
+/* ============================================================
+   SUGGESTION PILL LABEL
+   ============================================================ */
+
+p.sugg-label {
+    font-size: 0.7rem !important;
+    font-weight: 600 !important;
+    color: #1e2d45 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    margin: 14px 0 6px 0 !important;
+}
+
+/* ============================================================
+   TEXT INPUT
+   ============================================================ */
+
+.stTextInput > label { display: none !important; }
+
+.stTextInput > div > div > input {
+    background: #0c1525 !important;
+    border: 1.5px solid #1a2840 !important;
+    border-radius: 8px !important;
+    color: #d4dbe8 !important;
+    font-size: 1rem !important;
+    padding: 13px 16px !important;
+    transition: border-color 0.2s, box-shadow 0.2s !important;
+    caret-color: #00b4d8 !important;
+    width: 100% !important;
+}
+
+.stTextInput > div > div > input:focus {
+    border-color: #00b4d8 !important;
+    box-shadow: 0 0 0 3px rgba(0,180,216,0.1) !important;
+}
+
+.stTextInput > div > div > input::placeholder {
+    color: #1e2d45 !important;
+    font-style: italic;
+}
+
+/* ============================================================
+   MEDICAL ART — integrated into hero row, no floating box
+   ============================================================ */
+
+/* Dashboard animated ECG strip — full width, fixed height,
+   sits directly under the hero text as part of the page flow */
+.dash-ecg-wrap {
+    width: 100%;
+    height: 64px;
+    margin: 8px 0 4px 0;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+.dash-ecg { width: 100%; height: 100%; display: block; }
+
+/* Page header art — sits in the same flex row as the page-hero
+   text, vertically centered, NO border, NO background box, NO
+   absolute positioning. It reads as part of the hero, not a
+   separate floating card. The host column (h2 in app.py) is a
+   plain Streamlit column already aligned with the text column,
+   so we only need to vertically center within that column. */
+.page-art-wrap {
+    width: 100%;
+    max-width: 220px;
+    height: 90px;
+    margin: 12px 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-mask-image: radial-gradient(ellipse 85% 75% at center, #000 60%, transparent 100%);
+            mask-image: radial-gradient(ellipse 85% 75% at center, #000 60%, transparent 100%);
+}
+
+.page-art-svg {
+    width: 100%;
+    height: 90px;
+    display: block;
+    filter: drop-shadow(0 0 5px rgba(31,168,204,0.18));
+}
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+
+.field-label {
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    color: #243555 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.16em !important;
+    margin: 0 0 8px 0 !important;
+}
+
+.section-label {
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    color: #1a2840 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.18em !important;
+    margin: 0 0 6px 0 !important;
+}
+
+.divider { height: 1px; background: #0e1828; margin: 28px 0; }
+
+.body-text {
+    font-size: 0.96rem;
+    color: #6a80a0;
+    line-height: 1.75;
+    padding: 6px 0 10px 0;
+}
+
+.result-label {
+    font-size: 0.85rem;
+    color: #2d4060;
+    font-style: italic;
+    margin: 0 0 10px 0;
+    font-weight: 500;
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+
+.hero { padding: 36px 0 24px 0; }
+
+.hero-eyebrow {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #00b4d8;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
     margin-bottom: 10px;
 }
 
-h2 {
-
-    color: var(--accent) !important;
-
+.hero-h1 {
+    font-size: 2.8rem !important;
     font-weight: 700 !important;
+    color: #e8f0ff !important;
+    letter-spacing: -0.02em !important;
+    line-height: 1.15 !important;
+    margin: 0 0 16px 0 !important;
 }
 
-h3 {
+.hero-accent { color: #00b4d8; }
 
-    color: var(--accent) !important;
+.hero-p {
+    font-size: 1.05rem;
+    color: #3d5272;
+    line-height: 1.7;
+    max-width: 640px;
+    margin: 0;
 }
 
-
-/* =======================================================
-   METRIC CARDS
-======================================================= */
-
-.metric-card {
-
-    background:
-        linear-gradient(
-            145deg,
-            #10203a,
-            #0b1628
-        );
-
-    border: 1px solid rgba(34,211,238,0.18);
-
-    border-radius: 18px;
-
-    padding: 24px;
-
-    transition: all .25s ease;
-
-    min-height: 130px;
-
-    box-shadow:
-        0 10px 30px rgba(0,0,0,.25);
+/* Page hero (inner pages) — plain flow now that art is
+   integrated via flex columns in app.py, not absolute overlay */
+.page-hero {
+    padding: 20px 0 20px 0;
 }
 
-.metric-card:hover {
-
-    transform: translateY(-3px);
-
-    border-color: rgba(34,211,238,.4);
-
-    box-shadow:
-        0 15px 40px rgba(0,0,0,.35);
-}
-
-.metric-value {
-
-    font-size: 42px;
-
-    font-weight: 800;
-
-    color: var(--accent);
-
+.page-eyebrow {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #00b4d8;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
     margin-bottom: 8px;
 }
 
-.metric-title {
-
-    color: var(--text-secondary);
-
-    font-size: 15px;
+.page-h2 {
+    font-size: 2rem !important;
+    font-weight: 700 !important;
+    color: #e8f0ff !important;
+    letter-spacing: -0.02em !important;
+    line-height: 1.2 !important;
+    margin: 0 0 10px 0 !important;
 }
 
-
-/* =======================================================
-   ANSWER BOX
-======================================================= */
-
-.answer-box {
-
-    background:
-        linear-gradient(
-            180deg,
-            #0f1d35,
-            #0b1628
-        );
-
-    border: 1px solid rgba(34,211,238,.15);
-
-    border-left: 4px solid var(--accent);
-
-    border-radius: 16px;
-
-    padding: 24px;
-
-    margin-top: 15px;
-
-    color: white;
-
-    line-height: 1.7;
-
-    box-shadow:
-        0 10px 25px rgba(0,0,0,.25);
+.page-sub {
+    font-size: 1rem;
+    color: #3d5272;
+    line-height: 1.65;
+    max-width: 680px;
 }
 
+.page-sub strong { color: #00b4d8; font-weight: 600; }
 
-/* =======================================================
-   REQUIREMENT CARDS
-======================================================= */
+/* ============================================================
+   KPI CARDS
+   ============================================================ */
+
+.kpi-card {
+    background: #0c1525;
+    border: 1px solid #10202e;
+    border-radius: 10px;
+    padding: 22px 24px 20px 24px;
+    transition: border-color 0.2s;
+}
+
+.kpi-card:hover { border-color: #1a2e48; }
+
+.kpi-icon-row { font-size: 1.2rem; margin-bottom: 10px; opacity: 0.7; }
+
+.kpi-number {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 2.4rem;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+}
+
+.kpi-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #243555;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+/* ============================================================
+   MODULE CARDS
+   ============================================================ */
+
+.mod-card {
+    background: #0c1525;
+    border: 1px solid #10202e;
+    border-top: 3px solid #00b4d8;
+    border-radius: 10px;
+    padding: 20px 22px 16px 22px;
+    min-height: 150px;
+    transition: border-color 0.2s, transform 0.15s;
+    margin-bottom: 6px;
+}
+
+.mod-card:hover { border-color: #1a2e48; transform: translateY(-1px); }
+.mod-card-dim { opacity: 0.85; }
+
+.mod-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.mod-icon { font-size: 1.3rem; }
+
+.mod-tag {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+.mod-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #c8d8f0;
+    margin-bottom: 8px;
+    line-height: 1.2;
+}
+
+.mod-desc {
+    font-size: 0.85rem;
+    color: #2d4060;
+    line-height: 1.6;
+    margin-bottom: 4px;
+}
+
+/* ============================================================
+   STATUS CARDS
+   ============================================================ */
+
+.status-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #0c1525;
+    border: 1px solid #10202e;
+    border-radius: 10px;
+    padding: 16px 18px;
+}
+
+.status-dot-green {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: #2ec4b6;
+    flex-shrink: 0;
+    box-shadow: 0 0 6px #2ec4b6;
+    animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.4; }
+}
+
+.status-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #7a90b0;
+    line-height: 1.2;
+    margin-bottom: 2px;
+}
+
+.status-sub { font-size: 0.75rem; color: #243555; font-weight: 500; }
+
+/* ============================================================
+   RESULT BOX
+   ============================================================ */
+
+.result-box {
+    background: #0c1525;
+    border: 1px solid #10202e;
+    border-left: 3px solid #00b4d8;
+    border-radius: 8px;
+    padding: 22px 26px;
+    color: #8a9db8;
+    line-height: 1.8;
+    font-size: 0.96rem;
+    margin: 4px 0 14px 0;
+}
+
+.result-box h1, .result-box h2, .result-box h3 {
+    color: #b8c8e0 !important;
+    font-weight: 600 !important;
+}
+
+.result-box strong { color: #9aacc0; }
+
+.result-box code {
+    font-family: 'IBM Plex Mono', monospace;
+    background: #07090f;
+    border: 1px solid #10202e;
+    border-radius: 4px;
+    padding: 1px 7px;
+    font-size: 0.88rem;
+    color: #00b4d8;
+}
+
+/* ============================================================
+   INFO PANEL
+   ============================================================ */
+
+.info-panel {
+    background: #0c1525;
+    border: 1px solid #10202e;
+    border-radius: 10px;
+    padding: 22px 22px;
+    position: sticky;
+    top: 12px;
+}
+
+.info-panel-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #1e2d45;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #0e1828;
+}
+
+.info-item {
+    font-size: 0.92rem;
+    color: #4a6080;
+    padding: 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.tick { color: #00b4d8; font-weight: 700; font-size: 1rem; flex-shrink: 0; width: 16px; }
+
+.dot-g,.dot-r,.dot-y,.dot-o,.dot-b,.dot-c,.dot-p {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.dot-g { background: #2ec4b6; box-shadow: 0 0 5px #2ec4b655; }
+.dot-r { background: #e05252; box-shadow: 0 0 5px #e0525255; }
+.dot-y { background: #f4a261; box-shadow: 0 0 5px #f4a26155; }
+.dot-o { background: #e76f51; box-shadow: 0 0 5px #e76f5155; }
+.dot-b { background: #457b9d; box-shadow: 0 0 5px #457b9d55; }
+.dot-c { background: #00b4d8; box-shadow: 0 0 5px #00b4d855; }
+.dot-p { background: #a78bfa; box-shadow: 0 0 5px #a78bfa55; }
+
+.info-total {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #1a2840;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #0e1828;
+}
+
+/* ============================================================
+   REQUIREMENTS PAGE
+   ============================================================ */
+
+.list-header {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #1a2840;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #0e1828;
+}
+
+.stRadio > div { gap: 2px !important; }
+
+.stRadio label {
+    color: #3d526e !important;
+    font-size: 0.92rem !important;
+    font-weight: 400 !important;
+    padding: 9px 12px !important;
+    border-radius: 6px !important;
+    transition: all 0.12s !important;
+    cursor: pointer !important;
+    line-height: 1.4 !important;
+}
+
+.stRadio label:hover { color: #c8d8f0 !important; background: #0e1828 !important; }
 
 .req-card {
-
-    background:
-        linear-gradient(
-            180deg,
-            #10203a,
-            #0d182d
-        );
-
-    border: 1px solid rgba(255,255,255,.06);
-
-    border-radius: 14px;
-
-    padding: 16px;
-
-    margin-bottom: 12px;
-
-    transition: .25s ease;
+    background: #0c1525;
+    border: 1px solid #10202e;
+    border-radius: 10px;
+    padding: 22px 24px;
+    margin-bottom: 18px;
 }
 
-.req-card:hover {
-
-    border-color: rgba(34,211,238,.5);
-
-    background:
-        linear-gradient(
-            180deg,
-            #132541,
-            #10203a
-        );
-}
-
-.req-id {
-
-    color: var(--accent);
-
-    font-size: 12px;
-
-    font-weight: 700;
-
+.req-id-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #00b4d8;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
+    margin-bottom: 8px;
 }
 
 .req-title {
-
-    color: white;
-
-    font-size: 15px;
-
+    font-size: 1.15rem;
     font-weight: 600;
-
-    margin-top: 6px;
+    color: #dce8ff;
+    line-height: 1.35;
+    margin-bottom: 14px;
 }
 
-.req-feature {
+.req-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 
-    color: var(--text-secondary);
-
-    font-size: 12px;
-
-    margin-top: 4px;
+.chip-badge {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: #2d4060;
+    background: #07090f;
+    border: 1px solid #10202e;
+    border-radius: 5px;
+    padding: 3px 11px;
+    letter-spacing: 0.02em;
 }
 
+.kw-row { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 0 12px 0; }
 
-/* =======================================================
-   SEARCH BOX
-======================================================= */
-
-.stTextInput input,
-.stTextArea textarea {
-
-    background-color: #0f1d35 !important;
-
-    color: white !important;
-
-    border: 1px solid rgba(34,211,238,.15) !important;
-
-    border-radius: 12px !important;
+.kw-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: #1e3050;
+    background: #07090f;
+    border: 1px solid #0e1828;
+    border-radius: 4px;
+    padding: 3px 10px;
+    transition: color 0.15s, border-color 0.15s;
 }
 
-.stTextInput input:focus,
-.stTextArea textarea:focus {
+.kw-tag:hover { color: #00b4d8; border-color: #00b4d833; }
 
-    border-color: var(--accent) !important;
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
 
-    box-shadow:
-        0 0 0 1px var(--accent) !important;
+.empty-state { text-align: center; padding: 90px 40px; }
+.empty-icon  { font-size: 3rem; margin-bottom: 16px; opacity: 0.12; }
+.empty-title { font-size: 1.1rem; font-weight: 600; color: #1a2840; margin-bottom: 8px; }
+.empty-hint  { font-size: 0.88rem; color: #0e1828; letter-spacing: 0.04em; }
+
+/* ============================================================
+   STREAMLIT NATIVE OVERRIDES
+   ============================================================ */
+
+.stAlert { border-radius: 8px !important; font-size: 0.95rem !important; }
+
+.stInfo > div {
+    background: rgba(0,180,216,0.05) !important;
+    border: 1px solid rgba(0,180,216,0.12) !important;
+    border-radius: 8px !important;
+    color: #4a7a90 !important;
+    font-size: 0.95rem !important;
+    padding: 12px 16px !important;
 }
 
-
-/* =======================================================
-   BUTTONS
-======================================================= */
-
-.stButton > button {
-
-    background:
-        linear-gradient(
-            90deg,
-            #22d3ee,
-            #06b6d4
-        );
-
-    color: #021018;
-
-    border: none;
-
-    border-radius: 12px;
-
-    font-weight: 700;
-
-    height: 42px;
-
-    transition: .25s ease;
+.stWarning > div {
+    background: rgba(244,162,97,0.05) !important;
+    border: 1px solid rgba(244,162,97,0.12) !important;
+    border-radius: 8px !important;
+    color: #7a5a30 !important;
+    font-size: 0.95rem !important;
+    padding: 12px 16px !important;
 }
 
-.stButton > button:hover {
-
-    transform: translateY(-2px);
-
-    box-shadow:
-        0 10px 20px rgba(34,211,238,.25);
+.stSuccess > div {
+    background: rgba(46,196,182,0.05) !important;
+    border: 1px solid rgba(46,196,182,0.12) !important;
+    border-radius: 8px !important;
+    color: #2a6050 !important;
+    font-size: 0.95rem !important;
+    padding: 12px 16px !important;
 }
 
-
-/* =======================================================
-   TABLES
-======================================================= */
-
-[data-testid="stDataFrame"] {
-
-    border-radius: 16px;
-
-    overflow: hidden;
-
-    border: 1px solid rgba(255,255,255,.08);
+[data-testid="stMarkdownContainer"] p {
+    color: #8a9db8;
+    font-size: 0.96rem;
+    line-height: 1.78;
 }
 
-
-/* =======================================================
-   SUCCESS / INFO
-======================================================= */
-
-.stSuccess {
-
-    border-radius: 14px;
+[data-testid="stMarkdownContainer"] h1 {
+    color: #c8d8f0 !important;
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    margin-top: 1.5rem !important;
 }
 
-.stInfo {
-
-    border-radius: 14px;
+[data-testid="stMarkdownContainer"] h2 {
+    color: #b8ccee !important;
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    margin-top: 1.2rem !important;
 }
 
-
-/* =======================================================
-   SCROLLBAR
-======================================================= */
-
-::-webkit-scrollbar {
-
-    width: 10px;
+[data-testid="stMarkdownContainer"] h3 {
+    color: #a8bce0 !important;
+    font-size: 1.05rem !important;
+    font-weight: 600 !important;
+    margin-top: 1rem !important;
 }
 
-::-webkit-scrollbar-track {
+[data-testid="stMarkdownContainer"] strong { color: #9aaec8; }
 
-    background: #08121f;
+[data-testid="stMarkdownContainer"] li {
+    color: #6a80a0;
+    font-size: 0.96rem;
+    line-height: 1.7;
+    padding: 2px 0;
 }
 
-::-webkit-scrollbar-thumb {
-
-    background: #1e3a5f;
-
-    border-radius: 20px;
+[data-testid="stMarkdownContainer"] code {
+    font-family: 'IBM Plex Mono', monospace;
+    background: #07090f;
+    border: 1px solid #10202e;
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-size: 0.88rem;
+    color: #00b4d8;
 }
 
-::-webkit-scrollbar-thumb:hover {
-
-    background: #2f537f;
+[data-testid="stMarkdownContainer"] table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin: 12px 0;
 }
 
-.stRadio > div {
-    gap: 6px;
+[data-testid="stMarkdownContainer"] th {
+    background: #0e1828 !important;
+    color: #2d4060 !important;
+    font-weight: 700 !important;
+    font-size: 0.72rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.12em !important;
+    padding: 10px 14px !important;
+    border: 1px solid #10202e !important;
 }
 
-.stRadio label {
-    background: #12233A;
-    border: 1px solid rgba(0,212,255,.15);
-    border-radius: 10px;
-    padding: 10px;
+[data-testid="stMarkdownContainer"] td {
+    color: #5a7090 !important;
+    padding: 9px 14px !important;
+    border: 1px solid #0a1020 !important;
+    vertical-align: top !important;
+    line-height: 1.55 !important;
+    font-size: 0.92rem !important;
 }
 
-.stRadio label:hover {
-    border: 1px solid #00D4FF;
-    background: #16304D;
+[data-testid="stMarkdownContainer"] tr:nth-child(even) td { background: #0a1020 !important; }
+
+hr { border-color: #0e1828 !important; margin: 20px 0 !important; }
+
+.stSpinner > div { border-top-color: #00b4d8 !important; }
+
+.stCaption, [data-testid="stCaptionContainer"] {
+    color: #1e2d45 !important;
+    font-size: 0.8rem !important;
 }
 
-/* =====================================
-SCENARIO GENERATOR
-===================================== */
-
-.answer-box {
-
-    background: #101A2E;
-
-    padding: 25px;
-
-    border-radius: 14px;
-
-    border: 1px solid rgba(0,212,255,.15);
-
-    margin-top: 20px;
-
-    overflow-x: auto;
-}
-
-.answer-box h1,
-.answer-box h2,
-.answer-box h3 {
-
-    color: #00D4FF;
-}
-
-.answer-box strong {
-
-    color: #FFFFFF;
-}
-.premium-section {
-    padding: 15px 20px;
-    border-radius: 12px;
-    background: linear-gradient(
-        135deg,
-        rgba(0,212,255,.12),
-        rgba(16,32,58,.4)
-    );
-    border: 1px solid rgba(0,212,255,.15);
-    margin-bottom: 15px;
-}
-
-.premium-section h3 {
-    margin: 0;
-    color: #00D4FF;
+.stDataFrame {
+    border: 1px solid #10202e !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
 }

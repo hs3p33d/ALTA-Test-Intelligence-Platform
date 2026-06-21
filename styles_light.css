@@ -1,0 +1,449 @@
+/* =====================================================
+   ALTA AI - CLINICAL LIGHT THEME v2
+   Enterprise Medical Intelligence Design
+   ===================================================== */
+
+:root {
+
+    --bg: #f5f7fb;
+    --surface: #ffffff;
+    --surface-2: #fafcff;
+
+    --primary: #0066cc;
+    --primary-hover: #0052a3;
+
+    --text: #111827;
+    --muted: #64748b;
+
+    --border: #e5edf5;
+
+    --success: #16a34a;
+    --warning: #f59e0b;
+    --danger: #dc2626;
+
+    --shadow:
+        0 4px 14px rgba(15,23,42,.05);
+
+    --shadow-hover:
+        0 14px 32px rgba(15,23,42,.10);
+}
+
+/* =====================================================
+   APP
+   ===================================================== */
+
+.stApp {
+
+    background: var(--bg);
+    color: var(--text);
+}
+
+.main .block-container {
+
+    max-width: 100%;
+    padding-top: 1rem;
+    padding-left: 3rem;
+    padding-right: 3rem;
+    padding-bottom: 2rem;
+}
+
+/* =====================================================
+   NAVBAR
+   ===================================================== */
+
+.logo {
+
+    color: var(--text);
+    font-size: 1.9rem;
+    font-weight: 800;
+}
+
+.logo-ai {
+
+    color: var(--primary);
+}
+
+.nav-line {
+
+    background: var(--border);
+}
+
+.st-key-navbar {
+
+    background: rgba(255,255,255,.85);
+
+    backdrop-filter: blur(14px);
+
+    border: 1px solid rgba(229,237,245,.8);
+
+    border-radius: 18px;
+
+    padding: .65rem 1rem;
+
+    box-shadow: var(--shadow);
+}
+
+/* =====================================================
+   HERO
+   ===================================================== */
+
+.hero-card {
+
+    position: relative;
+
+    overflow: hidden;
+
+    background: white;
+
+    border: none;
+
+    border-radius: 28px;
+
+    padding: 2.5rem;
+
+    box-shadow: var(--shadow);
+}
+
+.hero-h1 {
+
+    color: var(--text);
+
+    font-size: 3rem;
+
+    font-weight: 800;
+
+    letter-spacing: -1px;
+
+    margin-bottom: .5rem;
+}
+
+.hero-p {
+
+    color: var(--muted);
+
+    font-size: 1rem;
+
+    line-height: 1.7;
+}
+
+/* =====================================================
+   KPI CARDS
+   ===================================================== */
+
+.kpi-card {
+
+    background: white;
+
+    border: none;
+
+    border-radius: 24px;
+
+    padding: 24px;
+
+    box-shadow: var(--shadow);
+
+    transition: all .25s ease;
+}
+
+.kpi-card:hover {
+
+    transform: translateY(-4px);
+
+    box-shadow: var(--shadow-hover);
+}
+
+.kpi-number {
+
+    color: var(--primary);
+
+    font-size: 2.2rem;
+
+    font-weight: 800;
+}
+
+.kpi-label {
+
+    color: var(--muted);
+
+    font-size: .9rem;
+}
+
+/* =====================================================
+   MODULE CARDS
+   ===================================================== */
+
+.mod-card {
+
+    background: white;
+
+    border: none;
+
+    border-radius: 24px;
+
+    padding: 24px;
+
+    box-shadow: var(--shadow);
+
+    transition: all .25s ease;
+}
+
+.mod-card:hover {
+
+    transform: translateY(-4px);
+
+    box-shadow: var(--shadow-hover);
+}
+
+.mod-title {
+
+    color: var(--text);
+
+    font-size: 1.15rem;
+
+    font-weight: 700;
+}
+
+.mod-desc {
+
+    color: var(--muted);
+
+    line-height: 1.7;
+}
+
+/* =====================================================
+   PAGE TITLES
+   ===================================================== */
+
+.page-h2 {
+
+    color: var(--text);
+
+    font-size: 2.7rem;
+
+    font-weight: 800;
+
+    letter-spacing: -1px;
+
+    margin-bottom: .4rem;
+}
+
+.page-sub {
+
+    color: var(--muted);
+
+    font-size: 1rem;
+}
+
+/* =====================================================
+   INPUTS
+   ===================================================== */
+
+.stTextInput input {
+
+    background: white !important;
+
+    border: none !important;
+
+    box-shadow:
+        0 0 0 1px #dbe4ef,
+        0 6px 18px rgba(15,23,42,.04);
+
+    border-radius: 16px !important;
+
+    height: 56px;
+
+    color: var(--text) !important;
+
+    font-size: 15px;
+}
+
+.stTextInput input:focus {
+
+    box-shadow:
+        0 0 0 2px rgba(0,102,204,.15),
+        0 6px 20px rgba(15,23,42,.08) !important;
+}
+
+.stTextArea textarea {
+
+    background: white !important;
+
+    color: var(--text) !important;
+
+    border: none !important;
+
+    box-shadow:
+        0 0 0 1px #dbe4ef,
+        0 6px 18px rgba(15,23,42,.04);
+
+    border-radius: 16px !important;
+}
+
+/* =====================================================
+   BUTTONS
+   ===================================================== */
+
+.stButton > button {
+
+    background: var(--primary) !important;
+
+    color: white !important;
+
+    border: none !important;
+
+    border-radius: 14px !important;
+
+    font-weight: 600 !important;
+
+    height: 48px !important;
+
+    transition: .2s;
+}
+
+.stButton > button:hover {
+
+    background: var(--primary-hover) !important;
+
+    transform: translateY(-1px);
+}
+
+/* =====================================================
+   REQUIREMENT DETAILS
+   ===================================================== */
+
+.req-card {
+
+    background: white;
+
+    border: none;
+
+    border-radius: 24px;
+
+    padding: 24px;
+
+    box-shadow: var(--shadow);
+}
+
+.req-title {
+
+    color: var(--text);
+
+    font-size: 1.4rem;
+
+    font-weight: 700;
+}
+
+/* =====================================================
+   INFO PANELS
+   ===================================================== */
+
+.info-panel {
+
+    background: #f8fbff;
+
+    border: 1px solid #dbeafe;
+
+    border-radius: 18px;
+
+    padding: 18px;
+}
+
+.info-panel strong {
+
+    color: var(--text);
+}
+
+/* =====================================================
+   RESULTS
+   ===================================================== */
+
+.result-box {
+
+    background: white;
+
+    border-left: 5px solid var(--primary);
+
+    border-radius: 20px;
+
+    padding: 24px;
+
+    box-shadow: var(--shadow);
+}
+
+.result-label {
+
+    color: var(--muted);
+
+    font-size: .8rem;
+
+    text-transform: uppercase;
+
+    letter-spacing: .08em;
+}
+
+/* =====================================================
+   STATUS
+   ===================================================== */
+
+.status-card {
+
+    background: white;
+
+    border: none;
+
+    border-radius: 20px;
+
+    padding: 18px;
+
+    box-shadow: var(--shadow);
+}
+
+/* =====================================================
+   ARTWORK
+   ===================================================== */
+
+.page-art-wrap {
+
+    width: 260px;
+
+    height: 160px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+.page-art-svg {
+
+    opacity: .15;
+
+    filter: none;
+}
+
+/* =====================================================
+   SCROLLBAR
+   ===================================================== */
+
+::-webkit-scrollbar {
+
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+
+    background: #edf3f8;
+}
+
+::-webkit-scrollbar-thumb {
+
+    background: #c7d5e5;
+
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+
+    background: #a8bfd8;
+}
